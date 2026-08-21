@@ -1,77 +1,77 @@
-import { Request, Response } from 'express';
-import { Model } from 'mongoose';
+import { FastifyRequest, FastifyReply } from 'fastify';
+import { Model, UpdateQuery } from 'mongoose';
 
 abstract class BaseCtrl<T> {
 
   abstract model:Model<T>
 
   // Get all
-  getAll = async (req: Request, res: Response) => {
+  getAll = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const docs = await this.model.find({});
-      return res.status(200).json(docs);
+      return reply.code(200).send(docs);
     } catch (err) {
-      return res.status(400).json({ error: (err as Error).message });
+      return reply.code(400).send({ error: (err as Error).message });
     }
   };
 
   // Count all
-  count = async (req: Request, res: Response) => {
+  count = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       const count = await this.model.countDocuments();
-      return res.status(200).json(count);
+      return reply.code(200).send(count);
     } catch (err) {
-      return res.status(400).json({ error: (err as Error).message });
+      return reply.code(400).send({ error: (err as Error).message });
     }
   };
 
   // Insert
-  insert = async (req: Request, res: Response) => {
+  insert = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      const obj = await new this.model(req.body).save();
-      return res.status(201).json(obj);
+      const obj = await new this.model(request.body as Partial<T>).save();
+      return reply.code(201).send(obj);
     } catch (err) {
-      return res.status(400).json({ error: (err as Error).message });
+      return reply.code(400).send({ error: (err as Error).message });
     }
   };
 
   // Get by id
-  get = async (req: Request, res: Response) => {
+  get = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      const obj = await this.model.findOne({ _id: req.params.id });
-      return res.status(200).json(obj);
+      const obj = await this.model.findOne({ _id: (request.params as { id: string }).id });
+      return reply.code(200).send(obj);
     } catch (err) {
-      return res.status(500).json({ error: (err as Error).message });
+      return reply.code(500).send({ error: (err as Error).message });
     }
   };
 
   // Update by id
-  update = async (req: Request, res: Response) => {
+  update = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      await this.model.findOneAndUpdate({ _id: req.params.id }, req.body);
-      return res.sendStatus(200);
+      await this.model.findOneAndUpdate({ _id: (request.params as { id: string }).id }, request.body as UpdateQuery<T>);
+      return reply.code(200).send('OK');
     } catch (err) {
-      return res.status(400).json({ error: (err as Error).message });
+      return reply.code(400).send({ error: (err as Error).message });
     }
   };
 
   // Delete by id
-  delete = async (req: Request, res: Response) => {
+  delete = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      await this.model.findOneAndDelete({ _id: req.params.id });
-      return res.sendStatus(200);
+      await this.model.findOneAndDelete({ _id: (request.params as { id: string }).id });
+      return reply.code(200).send('OK');
     } catch (err) {
-      return res.status(400).json({ error: (err as Error).message });
+      return reply.code(400).send({ error: (err as Error).message });
     }
   };
 
   // Drop collection (for tests)
-  deleteAll = async (_req: Request, res: Response) => {
+  deleteAll = async (_request: FastifyRequest, reply: FastifyReply) => {
     try {
       await this.model.deleteMany();
-      return res.sendStatus(200);
+      return reply.code(200).send('OK');
     } catch (err) {
-      return res.status(400).json({ error: (err as Error).message });
+      return reply.code(400).send({ error: (err as Error).message });
     }
   };
 }

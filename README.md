@@ -4,9 +4,9 @@
 
 Angular Full Stack is a project to easly get started with the latest Angular using a real backend and database. Whole stack is in TypeScript, from frontend to backend, giving you the advantage to code in one single language throughout the all stack.
 
-This project uses the [MEAN stack](https://en.wikipedia.org/wiki/MEAN_(software_bundle)):
+This project is based on the [MEAN stack](https://en.wikipedia.org/wiki/MEAN_(software_bundle)), with [Fastify](https://fastify.dev) replacing Express as the backend framework:
 * [**M**ongoose.js](http://www.mongoosejs.com) ([MongoDB](https://www.mongodb.com)): database
-* [**E**xpress.js](http://expressjs.com): backend framework
+* [**Fastify**](https://fastify.dev): backend framework
 * [**A**ngular](https://angular.io): frontend framework
 * [**N**ode.js](https://nodejs.org): runtime environment
 
@@ -25,9 +25,9 @@ Other tools and technologies used:
 
 ## Run
 ### Development mode with files watching
-`npm run dev`: [concurrently](https://github.com/kimmobrunfeldt/concurrently) execute MongoDB, Angular build, TypeScript compiler and Express server.
+`npm run dev`: [concurrently](https://github.com/kimmobrunfeldt/concurrently) execute MongoDB, Angular build, TypeScript compiler and Fastify server.
 
-A window will automatically open at [localhost:4200](http://localhost:4200). Angular and Express files are being watched. Any change automatically creates a new bundle, restart Express server and reload your browser.
+A window will automatically open at [localhost:4200](http://localhost:4200). Angular and Fastify files are being watched. Any change automatically creates a new bundle, restart Fastify server and reload your browser.
 
 ### Production mode
 `npm run prod`: run the project with a production bundle listening at [localhost:3000](http://localhost:3000) 

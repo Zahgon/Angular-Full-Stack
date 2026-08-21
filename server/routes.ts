@@ -1,38 +1,39 @@
-import { Router, Application } from 'express';
+import { FastifyInstance } from 'fastify';
 
 import CatCtrl from './controllers/cat';
 import UserCtrl from './controllers/user';
 
-const setRoutes = (app: Application): void => {
-  const router = Router();
+const setRoutes = (app: FastifyInstance): void => {
   const catCtrl = new CatCtrl();
   const userCtrl = new UserCtrl();
 
-  // Cats
-  router.route('/cats').get(catCtrl.getAll);
-  router.route('/cats/count').get(catCtrl.count);
-  router.route('/cat').post(catCtrl.insert);
-  router.route('/cat/:id').get(catCtrl.get);
-  router.route('/cat/:id').put(catCtrl.update);
-  router.route('/cat/:id').delete(catCtrl.delete);
+  const routes = async (router: FastifyInstance): Promise<void> => {
+    // Cats
+    router.get('/cats', catCtrl.getAll);
+    router.get('/cats/count', catCtrl.count);
+    router.post('/cat', catCtrl.insert);
+    router.get('/cat/:id', catCtrl.get);
+    router.put('/cat/:id', catCtrl.update);
+    router.delete('/cat/:id', catCtrl.delete);
 
-  // Users
-  router.route('/login').post(userCtrl.login);
-  router.route('/users').get(userCtrl.getAll);
-  router.route('/users/count').get(userCtrl.count);
-  router.route('/user').post(userCtrl.insert);
-  router.route('/user/:id').get(userCtrl.get);
-  router.route('/user/:id').put(userCtrl.update);
-  router.route('/user/:id').delete(userCtrl.delete);
+    // Users
+    router.post('/login', userCtrl.login);
+    router.get('/users', userCtrl.getAll);
+    router.get('/users/count', userCtrl.count);
+    router.post('/user', userCtrl.insert);
+    router.get('/user/:id', userCtrl.get);
+    router.put('/user/:id', userCtrl.update);
+    router.delete('/user/:id', userCtrl.delete);
 
-  // Test routes
-  if (process.env.NODE_ENV === 'test') {
-    router.route('/cats/delete').delete(catCtrl.deleteAll);
-    router.route('/users/delete').delete(userCtrl.deleteAll);
-  }
+    // Test routes
+    if (process.env.NODE_ENV === 'test') {
+      router.delete('/cats/delete', catCtrl.deleteAll);
+      router.delete('/users/delete', userCtrl.deleteAll);
+    }
+  };
 
   // Apply the routes to our application with the prefix /api
-  app.use('/api', router);
+  app.register(routes, { prefix: '/api' });
 
 };
 
